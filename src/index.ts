@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import cors from "cors";
 
 import { config } from "dotenv";
+import { roomHanlder } from "./room";
 config();
 
 const port = 8080;
@@ -20,24 +21,14 @@ const io = new Server(server, {
 
 io.on(`connection`, (socket) => {
   const userId = socket.id;
-  console.log(`[${getCurrentTime()}] User connected: ${userId} 🟢`);
-
-  socket.on(`join-room`, () => {
-    console.log(`[${getCurrentTime()}] Join room requested by ${userId} 🟠`);
-    socket.emit(`joined-room`);
-    console.log(`[${getCurrentTime()}] Join request accepted for ${userId} 🟢`);
-  });
-
+  console.log(`User connected: ${userId} 🟢`);
+  roomHanlder(socket);
   socket.on(`disconnect`, () => {
-    console.log(`[${getCurrentTime()}] User disconnected: ${userId} 🔴`);
+      console.log(`User disconnected: ${userId} 🔴`);
   });
 });
 
 server.listen(port, () => {
-  console.log(`[${getCurrentTime()}] Server listening on port ${port} 🎉`);
+  console.log(`Server listening on port ${port} 🎉`);
 });
 
-function getCurrentTime(): string {
-  const now = new Date();
-  return now.toLocaleTimeString();
-}
