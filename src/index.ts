@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 import cors from "cors";
 
 import { config } from "dotenv";
-import { roomHanlder } from "./room";
+import { roomHandler } from "./room";
 config();
 
 const port = 8080;
@@ -20,11 +20,10 @@ const io = new Server(server, {
 });
 
 io.on(`connection`, (socket) => {
-  const userId = socket.id;
-  console.log(`User connected: ${userId} 🟢`);
-  roomHanlder(socket);
+  console.log(`User connected`);
+  roomHandler(socket);
   socket.on(`disconnect`, () => {
-      console.log(`User disconnected: ${userId} 🔴`);
+    console.log(`User disconnected`);
   });
 });
 

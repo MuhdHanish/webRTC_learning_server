@@ -1,20 +1,28 @@
 import { Socket } from "socket.io";
 import { v4 as uuidV4 } from "uuid";
 
-export const roomHanlder = (socket: Socket) => {
-    const userId = socket.id;
+const rooms: Record<string, string[]> = {};
+
+interface IRoomParams {
+    roomId: string;
+    peerId: string;
+}
+
+export const roomHandler = (socket: Socket) => {
     const createRoom = () => {
-        console.log(`Create a room requested by ${userId} 🟠`);
         const roomId = uuidV4();
+        rooms[roomId] = [];
         socket.join(roomId);
         socket.emit(`room-created`, { roomId });
-        console.log(`Create room request accepted for ${userId} 🟢`);
+        console.log(`user created the room`)
     };
-    socket.on(`create-room`, createRoom);
-    const joinRoom = () => {
-        console.log(`Join room requested by ${userId} 🟠`);
+
+    const joinRoom = ({ roomId, peerId }: IRoomParams) => {
+        console.log(`user joined then room, roomId: ${roomId}, peerId: ${peerId}`);
+        socket.join(roomId);
         socket.emit(`joined-room`);
-        console.log(`Join request accepted for ${userId} 🟢`);
     };
+
+    socket.on(`create-room`, createRoom);
     socket.on(`join-room`, joinRoom);
 };
